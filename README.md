@@ -1,4 +1,4 @@
-# Vector-insde-IRIS
+# Vector-inside-IRIS
 This is an attempt to run a vector search demo comletely in IRIS    
 There are no external tools an all you need is a Terminal / console   
 and the managment portal
