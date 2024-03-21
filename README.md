@@ -1,10 +1,9 @@
 # Vector-inside-IRIS
 This is an attempt to run a vector search demo completely in IRIS    
-There are no external tools an all you need is a Terminal / console   
-and the managment portal
+There are no external tools and all you need is a Terminal / Console and the management portal.  
 Special thanks to [Alvin Ryanputra](https://community.intersystems.com/user/alvin-ryanputra)
-as his package [iris-vector-search](https://openexchange.intersystems.com/package/iris-vector-search)   
-was inspiration and source fot test data.   
+as his package [iris-vector-search](https://openexchange.intersystems.com/package/iris-vector-search)  
+was inspiration and source for test data.   
 My package is based on IRIS 2024.1 release and requires attention to your processor.   
 
 I attempted to write the demo in pure ObjectScript only the calcualtion of 
