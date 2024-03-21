@@ -1,5 +1,5 @@
 # Vector-inside-IRIS
-This is an attempt to run a vector search demo comletely in IRIS    
+This is an attempt to run a vector search demo completely in IRIS    
 There are no external tools an all you need is a Terminal / console   
 and the managment portal
 Special thanks to [Alvin Ryanputra](https://community.intersystems.com/user/alvin-ryanputra)
