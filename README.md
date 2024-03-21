@@ -76,8 +76,12 @@ ID      price   name
 5 Rows(s) Affected
 ```
 You see the basic functionalities of Vectors in steps 1..4   
-Step 5..8 are related to the search example I borrowed from Alvin     
+Steps 5..8 are related to the search example I borrowed from Alvin     
 Step 6 (import of test data) is straight ObjectScript       
 SQL LOAD DATA was far too sensible for irregularities in the input CSV  
 
 I suggest following the examples also in MGMT portal to watch how Vectors operate.
+
+[Article in DC](https://community.intersystems.com/post/vector-inside-iris)
+
+[GitHub](https://github.com/rcemper/Vector-inside-IRIS)
