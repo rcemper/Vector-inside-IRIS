@@ -76,7 +76,7 @@ ID      price   name
 ```
 You see the basic functionalities of Vectors in steps 1..4   
 Step 5..8 are related to the search example I borrowed from Alvin     
-6 import of test data is straight ObjectScript       
+Step 6 (import of test data) is straight ObjectScript       
 SQL LOAD DATA was far too sensible for irregularities in the input CSV  
 
 I suggest following the examples also in MGMT portal to watch how Vectors operate.
