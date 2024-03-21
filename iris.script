@@ -14,10 +14,8 @@
     // this should be the place for individual application code.
 
     zn "USER"
-    zpm "install MDX2JSON"
-    zpm "install samples-bi"
-    do EnableDeepSee^%SYS.cspServer("/csp/user/")
+    zpm "load /home/irisowner/dev/ -v":1 
     zpm "list"
- 
+    write !,$ZV,!
     halt
 

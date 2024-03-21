@@ -1,0 +1,169 @@
+ROUTINE A.DemoV
+Demo ;  Test Vector Storage
+	kill
+	write !?5,"Test Vector Search"
+	write !,"============================="
+	write !?5,"1 - Initialize Tables"
+	write !?5,"2 - Generate Data"
+	write !?5,"3 - VECTOR_COSINE"	
+	write !?5,"4 - VECTOR_DOT_PRODUCT"
+	write !?5,"5 - Create Scotch"
+	write !?5,"6 - Load Scotch.csv"
+	write !?5,"7 - generate VECTORs"
+	write !?5,"8 - VECTOR search"
+	read !,"Select Function or * to exit : ",f,!
+	if $e(f)'?1N write !,"bye" quit
+	set %rcc=1
+	do $case($e(f),1:ini
+				,2:gen
+	 			,3:cos
+	 			,4:dot
+	 			,5:sc1
+	 			,6:sc2
+	 			,7:sc3
+	 			,8:sc4
+				,:back)
+	goto Demo 
+             
+ini
+	&sql( DROP TABLE A.vec1)
+	&sql( CREATE TABLE A.vec1 (vec1 VECTOR(DOUBLE,3), vec2 VECTOR(DOUBLE,3) ))
+	if SQLCODE break
+	write !,"Table A.vec1 re-generated"	
+
+	&sql( DROP TABLE A.vec2)
+	&sql( CREATE TABLE A.vec2 (vec1 VECTOR(DOUBLE)))
+	if SQLCODE break
+	write !,"Table A.vec2 re-generated"	
+	
+	&sql( DROP TABLE A.vec3)
+	&sql( CREATE TABLE A.vec3 (vec1 VECTOR))
+	if SQLCODE break
+	write !,"Table A.vec3 re-generated"	
+	write !
+back 
+	quit
+sql
+	set rs=##class(%SQL.Statement).%ExecDirect(.tStmt,.sql)
+	if rs.%SQLCODE break
+	do rs.%Display()
+	write !
+	quit
+gen 
+	&SQL(INSERT INTO A.vec1 (vec1, vec2) VALUES (TO_VECTOR('0.1,0.2,0.3'),TO_VECTOR('0.4,0.5,0.6')))
+	if SQLCODE break
+	&SQL(INSERT INTO A.vec2 (vec1) VALUES (TO_VECTOR('0.4,0.5,0.6')))
+	if SQLCODE break 
+	&SQL(INSERT INTO A.vec3 (vec1) VALUES (TO_VECTOR('0.7,0.8,0.9')))
+	if SQLCODE break
+	write !,"-------------------------------",!
+	set sql="SELECT 'vec1' tab ,%EXTERNAL(vec1) vec from A.vec1 UNION ALL "_
+			"SELECT 'vec2' tab ,%EXTERNAL(vec1) vec from A.vec2 UNION ALL "_
+			"SELECT 'vec3' tab ,%EXTERNAL(vec1) vec from A.vec3 "
+	do sql
+	quit
+cos
+	set sql="SELECT VECTOR_COSINE(vec1, vec2) FROM A.vec1"
+	write !,sql,!
+	do sql
+	quit
+dot
+	set sql="SELECT VECTOR_DOT_PRODUCT(vec1, vec2) FROM A.vec1"
+	write !,sql,!
+	do sql
+	quit
+sc1
+	&sql( DROP TABLE A.scotch)
+	&sql( CREATE TABLE A.scotch (
+	    name VARCHAR(255),
+	    category VARCHAR(255),
+		reviewpoint INT,
+    	price INT,
+    	description VARCHAR(2000),
+    	description_vector VECTOR(DOUBLE, 384)
+     )) 
+ 	if SQLCODE break
+	write !,"Table A.scotch re-generated",!
+	
+ 	quit
+sc2 	    	
+#;	set file="C:\GitHub\Vector-inside-IRIS\scotch.csv"
+	set file="/home/irisowner/dev/scotch.csv"
+	set hdr=$lb("","name","category","reviewpoint","price","currency","description")
+    set hdx="2,3,4,5,7"
+    open file:("R"):0 else  write !,"File missing",! quit
+    set $ZT="eof"
+	;name, category,reviewpoint,price,description
+	use file read cols 
+	for rec=0:1 {
+		use file read line
+		set linb=$lfs($e(line,2,*-1),""",""")
+		set skip=0
+		if $ll(linb)<2,$i(rec,-1) continue
+		kill val
+		for c=2:1:5,7 {
+			set val(c)=$lg(linb,c)
+			if 45[c set val(c)=+val(c)\1  ; reviewpoint, price
+			}
+		&SQL( INSERT INTO A.scotch (name, category,reviewpoint,price,description)
+					VALUES(:val(2),:val(3),:val(4),:val(5),:val(7))
+			)
+		if SQLCODE break		
+	}
+eof 
+	set $ZTRAP=""
+	if $ze'["ENDOFFILE" b	
+	close file
+	write !?5,rec," Records loaded",!
+	quit
+	
+sc3
+	set (mx,fr)=1
+	&sql(SELECT max(id) into :mx from A.scotch)
+	if SQLCODE break
+	&sql(SELECT id into :fr from A.scotch where description_vector is NULL )
+	if SQLCODE=100 Write !?5,"no Vector missing",! quit
+	if SQLCODE break
+	do DISABLE^%NOJRN
+	write !,"last vector processed for id",!,fr	 
+	for id=fr:5:mx {
+		set last=id+4
+		if last>mx set last=mx
+		&SQL(UPDATE A.scotch 
+			SET description_vector=TO_VECTOR(A.py_Vec(description),DOUBLE,384)
+			WHERE id BETWEEN :id AND :last 
+			AND description_vector is NULL )
+		write ">"_last read yn#1:0 if $l(yn) break
+		if SQLCODE=100 w "!" continue
+		if SQLCODE  break
+		if fr+50<id {
+			read !,"continue ? (Y):",yn:2,!
+			if $test,"nN"[$e(yn) quit
+			else  set fr=id
+			}
+	}
+	do ENABLE^%NOJRN
+	quit	 	
+sc4
+	write !?5,"Default search:",
+		!,"Let's look for a scotch that costs less than $100,",
+		!," and has an earthy and creamy taste"
+	read !?5,"change price limit [100]: ",prc
+	set price=$s(+prc:+prc,1:100)
+	read !?5,"change phrase [earthy and creamy taste]: ",phr,!
+	set phrase=$s($l(phr):phr,1:"earthy and creamy taste")
+	write !,"calculating search vector",!
+	set search=##class(A.py).Vec(phrase)
+	set ct=0
+	&SQL(SELECT count(ID) into :ct FROM A.scotch WHERE price < :price)
+	write !?5,"Total below $"_price_": "_ct,!!
+	set sql="SELECT TOP 5 id,price,name FROM A.scotch "_
+    	"WHERE price < ? ORDER BY "_
+		"VECTOR_DOT_PRODUCT(description_vector, TO_VECTOR(?,DOUBLE,384)) "_
+		" DESC "
+	set rs=##class(%SQL.Statement).%ExecDirect(.tStmt,.sql,.price,.search)
+	if rs.%SQLCODE break
+	do rs.%Display()
+	write !
+	quit
+	 
