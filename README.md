@@ -2,18 +2,17 @@
 This is an attempt to run a vector search demo completely in IRIS    
 There are no external tools and all you need is a Terminal / Console and the management portal.  
 Special thanks to [Alvin Ryanputra](https://community.intersystems.com/user/alvin-ryanputra)
-as his package [iris-vector-search](https://openexchange.intersystems.com/package/iris-vector-search)  
-was inspiration and source for test data.   
-My package is based on IRIS 2024.1 release and requires attention to your processor.   
+as his package [iris-vector-search](https://openexchange.intersystems.com/package/iris-vector-search) that was the base   
+of inspiration and the source for test data.   
+My package is based on IRIS 2024.1 release and requires attention to your processor capabilities.   
 
-I attempted to write the demo in pure ObjectScript only the calcualtion of 
-the description vector is done in embedded Python.
-Calculatiion of a vection with 384 dimension over 2247 records takes time.
-My Docker containe took 01:53:14 to geerate it.  
-So I adjuted that step to be reentrant to allow pausing generation.
+I attempted to write the demo in pure ObjectScript only the calculation of the description_vector       
+is done in embedded Python. Calculation of a vector with 384 dimensions over 2247 records takes time.   
+In myy Docker container it was running  01:53:14 to generate it completely.      
+So I adjuted this step to be reentrant to allow pausing generation.     
 Every 50 records you get an offer to have a stop.
 
-Any suggestion for enhacements are very welcome,
+Any suggestions for enhancements are very welcome,
 
 ### Prerequisites
 Make sure you have [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) and [Docker desktop](https://www.docker.com/products/docker-desktop) installed.
@@ -75,11 +74,9 @@ ID      price   name
 
 5 Rows(s) Affected
 ```
-You see basic functionalities of Vectors in steps 1..4   
-Step 5..8 is the search example    
-6 import of test data is straight Objeect Script    
-SQL LOAD DATA was far to sensible for irregularities in the input CSV  
+You see the basic functionalities of Vectors in steps 1..4   
+Step 5..8 are related to the search example I borrowed from Alvin     
+6 import of test data is straight ObjectScript       
+SQL LOAD DATA was far too sensible for irregularities in the input CSV  
 
-I suggest to follow the examplea also in MGMT portal to see how Vectors operate
-
- 
+I suggest following the examples also in MGMT portal to watch how Vectors operate.
