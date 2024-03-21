@@ -6,10 +6,11 @@ as his package [iris-vector-search](https://openexchange.intersystems.com/packag
 of inspiration and the source for test data.   
 My package is based on IRIS 2024.1 release and requires attention to your processor capabilities.   
 
-I attempted to write the demo in pure ObjectScript only the calculation of the description_vector       
-is done in embedded Python. Calculation of a vector with 384 dimensions over 2247 records takes time.   
-In myy Docker container it was running  01:53:14 to generate it completely.      
-So I adjuted this step to be reentrant to allow pausing generation.     
+I attempted to write the demo in pure ObjectScript.   
+Only the calculation of the description_vectoris done in embedded Python.   
+Calculation of a vector with 384 dimensions over 2247 records takes time.   
+In my Docker container, it was running  01:53:14 to generate them completely.      
+So I adjusted this step to be reentrant to allow pausing generation.     
 Every 50 records you get an offer to have a stop.
 
 Any suggestions for enhancements are very welcome,
