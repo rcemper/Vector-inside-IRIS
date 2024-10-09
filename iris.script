@@ -5,6 +5,7 @@
     // Unexpire passwords and set up passwordless mode to simplify dev use.
     do ##class(Security.Users).UnExpireUserPasswords("*")
     zpm "install passwordless"
+    zpm "install iterm"	
 
     zn "USER"
     // Create /_vscode web app to support intersystems-community.testingmanager VS Code extension

@@ -1,9 +1,9 @@
-version: '3.6'
 services:
   iris:
-    image: intersystemsdc/iris-community:preview
-    restart: no
-    command: -a /home/irisowner/dev/ascript.sh
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    restart: always
     ports: 
       - 41773:1972
       - 42773:52773
